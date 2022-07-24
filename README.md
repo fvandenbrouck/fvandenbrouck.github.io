@@ -10,3 +10,4 @@
 
 - Seconde année de CPGE
   - [Mouvement d'une bille dans un fluide newtonien](mvt_bille_fluidenewtonien.md) (BCPST2)
+    [Notebook: Mouvement d'une bille dans un fluide newtonien](mvt_bille_fluidenewtonien.ipynb)
