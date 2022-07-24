@@ -3,12 +3,4 @@
 ## François Vandenbrouck
 ### Inspecteur général de l'éducation, du sport et de la recherche
 
-## Ressources numériques CPGE
-
-- Première année de CPGE
-  - Quelques éléments de thermodynamique de l'atmosphère (PCSI, TPC1 et BCPST1)
-
-- Seconde année de CPGE
-  - Mouvement d'une bille dans un fluide newtonien (BCPST2) 
-    - [Consulter](mvt_bille_fluidenewtonien.md) 
-    - [Notebook](mvt_bille_fluidenewtonien.ipynb)
+Cet [espace Github]() contient des res.sources numériques destinées à accompagner les nouveaux programmes de physique-chimie de CPGE
