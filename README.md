@@ -10,5 +10,5 @@
 
 - Seconde année de CPGE
   - Mouvement d'une bille dans un fluide newtonien (BCPST2) 
-    - [Consulter](mvt_bille_fluidenewtonien.html) 
+    - [Consulter](mvt_bille_fluidenewtonien.md) 
     - [Notebook](mvt_bille_fluidenewtonien.ipynb)
