@@ -36,8 +36,9 @@ L'action mécanique de l'air sur la goutte d'eau est modélisée par une force d
 L'équation du mouvement de la goutte d'eau se déduit de la seconde loi de Newton:
 
 $$
-m\frac{\mathrm{d}\vec{v}}{\mathrm{d}t}=-\frac{1}{2}\rho_a S C_x v\vec{v}-m\vec{g}\,,
+m \frac{\mathrm{d}\vec{v}}{\mathrm{d}t}=-\frac{1}{2}\rho_a S C_x v\vec{v}-m\vec{g},,
 $$
+
 avec $S=\pi R^2$ et $m=\frac{4}{3}\pi R^3 \rho_e$.
 
 Le mouvement de la goutte En projection sur l'axe $(Oz)$ vertical descendant, on obtient:
@@ -101,7 +102,7 @@ def Cx(Re):
 
 
     
-![png](mvt_bille_fluidenewtonien_files/mvt_bille_fluidenewtonien_7_0.png)
+![png](mvt_bille_fluidenewtonien_7_0.png)
     
 
 
@@ -185,7 +186,7 @@ plt.show()
 
 
     
-![png](mvt_bille_fluidenewtonien_files/mvt_bille_fluidenewtonien_17_0.png)
+![png](mvt_bille_fluidenewtonien_17_0.png)
     
 
 
@@ -422,7 +423,7 @@ plt.show()
 
 
     
-![png](mvt_bille_fluidenewtonien_files/mvt_bille_fluidenewtonien_42_0.png)
+![png](mvt_bille_fluidenewtonien_42_0.png)
     
 
 
@@ -483,7 +484,7 @@ plt.show()
 
 
     
-![png](mvt_bille_fluidenewtonien_files/mvt_bille_fluidenewtonien_48_0.png)
+![png](mvt_bille_fluidenewtonien_48_0.png)
     
 
 
