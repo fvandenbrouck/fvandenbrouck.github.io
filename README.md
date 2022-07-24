@@ -10,5 +10,5 @@ Cet [espace Github](https://github.com/fvandenbrouck/fvandenbrouck.github.io) co
 - Coefficient de traînée (BCPST2)
 - Approximation des états quasi-stationnaires (BCPST2)
 - Contrôle cinétique et contrôle thermodynamique (BCPST2)
-- Oscillateur harmonique (BCPST2)
+- Oscillateur harmonique; oscillateur anharmonique (BCPST2)
 - Précipitation sélective (BCPST2)
