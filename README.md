@@ -7,7 +7,7 @@ Cet [espace GitHub](https://github.com/fvandenbrouck/fvandenbrouck.github.io) co
 
   *Modélisation du champ de température et de pression de l'atmosphère terrestre; application à la construction d'émagrammes et à l'étude de la stabilité d'un profil réel d'atmosphère obtenu par sondage vis-à-vis des mouvements verticaux de convection.*
   
-### Seconde année de CPGE:**
+### Seconde année de CPGE:
   - **Mouvement d'une bille dans un fluide newtonien** (BCPST2):
   
   *Résolution numérique de l'équation du mouvement avec un coefficient de traînée qui s'adapte à la vitesse instantanée; application à la détermination de la valeur de la vitesse stationnaire de chute verticale d'une goutte d'eau dans l'air, puis à la détermination de la trajectoire d'une balle de golf dans l'air avec l'objectif d'optimiser le tir.*
