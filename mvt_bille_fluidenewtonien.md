@@ -36,7 +36,7 @@ L'action mécanique de l'air sur la goutte d'eau est modélisée par une force d
 L'équation du mouvement de la goutte d'eau se déduit de la seconde loi de Newton:
 
 $$
-m \frac{\mathrm{d}\vec{v}}{\mathrm{d}t}=-\frac{1}{2}\rho_a S C_x v\vec{v}-m\vec{g},,
+m \frac{\mathrm{d}\vec{v}}{\mathrm{d}t}=-\frac{1}{2}\rho_a S C_x v\vec{v}-m\vec{g},
 $$
 
 avec $S=\pi R^2$ et $m=\frac{4}{3}\pi R^3 \rho_e$.
@@ -44,7 +44,7 @@ avec $S=\pi R^2$ et $m=\frac{4}{3}\pi R^3 \rho_e$.
 Le mouvement de la goutte En projection sur l'axe $(Oz)$ vertical descendant, on obtient:
 
 $$
- \frac{\mathrm{d} v_z}{\mathrm{d}t}=-\frac{3}{8}\frac{\rho_a}{\rho_e} \frac{C_x}{R} v_z^2+g\,.
+ \frac{\mathrm{d} v_z}{\mathrm{d}t}=-\frac{3}{8}\frac{\rho_a}{\rho_e} \frac{C_x}{R} v_z^2+g.
 $$
 
 On propose de résoudre numériquement cette équation différentielle.
@@ -214,7 +214,7 @@ L'action mécanique de l'air sur la balle de golf est modélisée, comme précé
 L'équation différentielle qui régit le mouvement de la balle est donnée par la seconde loi de Newton:
 
 $$
-m\frac{\mathrm{d}\vec{v}}{\mathrm{d}t}=-\frac{1}{2}\rho S C_x v\vec{v}-m\vec{g}\,.
+m\frac{\mathrm{d}\vec{v}}{\mathrm{d}t}=-\frac{1}{2}\rho S C_x v\vec{v}-m\vec{g}.
 $$
 
 ### Résolution numérique de l'équation du mouvement
@@ -222,10 +222,10 @@ $$
 On commence par projeter l'équation du mouvement sur l'axe horizontal ($Ox$) et vertical ($Oz$):
 
 $$
-m\frac{\mathrm{d}v_x}{\mathrm{d} t}=-\frac{1}{2}\rho S C_x vv_x\,,
+m\frac{\mathrm{d}v_x}{\mathrm{d} t}=-\frac{1}{2}\rho S C_x vv_x,
 $$
 $$
-m\frac{\mathrm{d}v_z}{\mathrm{d} t}=-\frac{1}{2}\rho S C_x vv_z-mg\,.
+m\frac{\mathrm{d}v_z}{\mathrm{d} t}=-\frac{1}{2}\rho S C_x vv_z-mg.
 $$
 
 #### Mise en forme des données
