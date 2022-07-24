@@ -3,4 +3,4 @@
 ## François Vandenbrouck
 ### Inspecteur général de l'éducation, du sport et de la recherche
 
-Cet [espace Github]() contient des res.sources numériques destinées à accompagner les nouveaux programmes de physique-chimie de CPGE
+Cet [espace Github](https://github.com/fvandenbrouck/fvandenbrouck.github.io) contient des res.sources numériques destinées à accompagner les nouveaux programmes de physique-chimie de CPGE
