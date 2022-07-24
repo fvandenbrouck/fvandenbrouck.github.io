@@ -9,6 +9,6 @@
   - Quelques éléments de thermodynamique de l'atmosphère (PCSI, TPC1 et BCPST1)
 
 - Seconde année de CPGE
-  - [Mouvement d'une bille dans un fluide newtonien](mvt_bille_fluidenewtonien.md) (BCPST2)
-  
-  - [Notebook: mouvement d'une bille dans un fluide newtonien](mvt_bille_fluidenewtonien.ipynb)
+  - Mouvement d'une bille dans un fluide newtonien (BCPST2) 
+    - [Consulter](mvt_bille_fluidenewtonien.md) 
+    - [Notebook](mvt_bille_fluidenewtonien.ipynb)
