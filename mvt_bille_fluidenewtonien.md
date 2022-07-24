@@ -100,7 +100,7 @@ def Cx(Re):
 
 
     
-![png](mvt_bille_fluidenewtonien_7_0.png)
+![png](images/mvt_bille_fluidenewtonien_7_0.png)
     
 
 
@@ -184,7 +184,7 @@ plt.show()
 
 
     
-![png](mvt_bille_fluidenewtonien_17_0.png)
+![png](images/mvt_bille_fluidenewtonien_17_0.png)
     
 
 
@@ -353,7 +353,7 @@ plt.show()
 
 
     
-![png](mvt_bille_fluidenewtonien_35_0.png)
+![png](images/mvt_bille_fluidenewtonien_35_0.png)
     
 
 
@@ -361,7 +361,7 @@ Il est instructif de comparer cette trajectoire à la trajectoire parabolique te
 des boulets de canon (voir ci-après).
 
 
-![Tartaglia.jpeg](tartaglia.jpg)
+![Tartaglia.jpeg](images/tartaglia.jpg)
 
 Niccolo Tartaglia. *Nova Scientia*, 1537.
 
@@ -420,7 +420,7 @@ plt.show()
 
 
     
-![png](mvt_bille_fluidenewtonien_42_0.png)
+![png](images/mvt_bille_fluidenewtonien_42_0.png)
     
 
 
@@ -481,7 +481,7 @@ plt.show()
 
 
     
-![png](mvt_bille_fluidenewtonien_48_0.png)
+![png](images/mvt_bille_fluidenewtonien_48_0.png)
     
 
 
