@@ -10,13 +10,13 @@ Cet [espace GitHub](https://github.com/fvandenbrouck/fvandenbrouck.github.io) co
 - **Seconde année de CPGE:**
   - Mouvement d'une bille dans un fluide newtonien (BCPST2):
   
-  *Résolution numérique de l'équation du mouvement avec un coefficient de traînée qui s'adapte à la vitesse instantanée; application à la détermination de la vitesse stationnaire de chute d'une goutte d'eau verticale dans l'air et à la détermination de la trajectoire d'une balle de golf dans l'air et à l'optimisation du tir.*
+  *Résolution numérique de l'équation du mouvement avec un coefficient de traînée qui s'adapte à la vitesse instantanée; application à la détermination de la valeur de la vitesse stationnaire de chute verticale d'une goutte d'eau dans l'air, puis à la détermination de la trajectoire d'une balle de golf dans l'air avec l'objectif d'optimiser le tir.*
   - Coefficient de traînée (BCPST2):
   
   *Résolution numérique de l'équation du mouvement en utilisant la méthode d'Euler, puis la fonction `odeint`.*
   - Approximation de l'état quasi-stationnaire (BCPST2):
   
-  *Tracé, dans le cas de deux actes élémentaires successifs, de l’évolution des concentrations par résolution numérique du système d’équations différentielles et mise en évidence les conditions d’application de l’approximation de l’état quasi-stationnaire.*
+  *Tracé, dans le cas de deux actes élémentaires successifs, de l’évolution des concentrations par résolution numérique du système d’équations différentielles et mise en évidence des conditions d’application de l’approximation de l’état quasi-stationnaire.*
   - Contrôle cinétique et contrôle thermodynamique (BCPST2):
   
   *Résolution des équations cinétiques et visualisation de l’évolution des concentrations au cours du temps, mise en évidence des situations de contrôle cinétique ou thermodynamique.*
