@@ -5,5 +5,8 @@
 
 ## Ressources numériques CPGE
 
-- BCPST2
-  - [Mouvement d'une bille dans un fluide newtonien](mwt_bille_fluidenewtonien.ipynb)
+- Première année de CPGE
+  - [Quelques éléments de thermodynamique de l'atmosphère](atmosphere.ipnyb) (PCSI, TPC1 et BCPST1)
+
+- Seconde année de CPGE
+  - [Mouvement d'une bille dans un fluide newtonien](mwt_bille_fluidenewtonien.ipynb) (BCPST2)
