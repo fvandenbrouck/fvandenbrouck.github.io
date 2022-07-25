@@ -1,6 +1,6 @@
 <img src="https://user-images.githubusercontent.com/109895707/180656875-56e0673c-6106-4743-baaf-152b13083c69.jpg" width="300"/>
 
-Cet [espace GitHub](https://github.com/fvandenbrouck/fvandenbrouck.github.io) contient des ressources numériques destinées à accompagner les nouveaux programmes de physique-chimie de CPGE. Sélectionner [dans ce répertoire](https://github.com/fvandenbrouck/fvandenbrouck.github.io) les fichiers au format `ipynb` pour les consulter ou les télécharger.
+Cet [espace GitHub](https://github.com/fvandenbrouck/fvandenbrouck.github.io) contient des ressources numériques destinées à accompagner les nouveaux programmes de physique-chimie de CPGE. Sélectionner [dans les différents répertoires](https://github.com/fvandenbrouck/fvandenbrouck.github.io) les fichiers au format `ipynb`,`py`ou `pdf` pour les consulter ou les télécharger.
 
 ### Tableau des ressources disponibles
 
