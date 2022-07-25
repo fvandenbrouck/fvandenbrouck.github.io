@@ -18,6 +18,6 @@ Cet [espace GitHub](https://github.com/fvandenbrouck/fvandenbrouck.github.io) co
 | **Point de fonctionnement d'un réacteur** (*détermination du point de fonctionnement (température et taux de conversion) d’un réacteur parfaitement agité continu siège d’une transformation modélisée par une réaction unique et en discuter la stabilité.*) | Chimie |||| x |x|x|||
 | **Oscillateur** (*simulation de l'évolution temporelle d'un signal généré par un oscillateur.*) | Physique | |||||| x | |
 | **Lignes de champ et lignes équipotentielles électrostatiques** (*tracé de quelques lignes de champ et lignes équipotentielle pour une distribution de charges données.*) | Physique | |||||| x | |
-| **Filtrage numérique d'un signal** (*filtrage numérique passe-bas d’un signal issu d’une acquisition et mise en évidence de la limitation introduite par l’échantillonnage.) | Physique | |||||| x | |
+| **Filtrage numérique d'un signal** (*filtrage numérique passe-bas d’un signal issu d’une acquisition et mise en évidence de la limitation introduite par l’échantillonnage.*) | Physique | |||||| x | |
 
 
