@@ -20,4 +20,9 @@ Cet [espace GitHub](https://github.com/fvandenbrouck/fvandenbrouck.github.io) co
 | **Lignes de champ et lignes équipotentielles électrostatiques** (*tracé de quelques lignes de champ et lignes équipotentielle pour une distribution de charges données.*) | Physique | |||||| x | |
 | **Filtrage numérique d'un signal** (*filtrage numérique passe-bas d’un signal issu d’une acquisition et mise en évidence de la limitation introduite par l’échantillonnage.*) | Physique | |||||| x | |
 
-
+<p xmlns:dct="http://purl.org/dc/terms/" xmlns:vcard="http://www.w3.org/2001/vcard-rdf/3.0#">
+  <a rel="license"
+     href="http://creativecommons.org/publicdomain/zero/1.0/">
+    <img src="http://i.creativecommons.org/p/zero/1.0/88x31.png" style="border-style: none;" alt="CC0" />
+  </a>
+</p>
