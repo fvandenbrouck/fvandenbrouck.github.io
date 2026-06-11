@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">  <title>Checklist Révision — Baccalauréat</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f1f5f9;
+      color: #0f172a;
+      min-height: 100vh;
+      padding: 1.5rem 1rem 4rem;
+    }
+
+    #app { max-width: 760px; margin: 0 auto; }
+
+    h1 {
+      text-align: center;
+      font-size: 1.4rem;
+      font-weight: 900;
+      margin-bottom: 0.25rem;
+    }
+    .subtitle {
+      text-align: center;
+      color: #64748b;
+      font-size: 0.85rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Tab bar */
+    .tabs {
+      display: flex;
+      gap: 0.4rem;
+      background: #e2e8f0;
+      border-radius: 10px;
+      padding: 4px;
+      margin-bottom: 1.5rem;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 0.6rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      background: transparent;
+      color: #64748b;
+      transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+    }
+    .tab-btn.active-maths { background: #fff; color: #6366f1; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+    .tab-btn.active-pc    { background: #fff; color: #0891b2; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+
+    /* Panel */
+    .panel { background: #fff; border-radius: 16px; padding: 1.5rem; box-shadow: 0 1px 6px rgba(0,0,0,0.06); }
+    .panel.hidden { display: none; }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+    .panel-title { font-size: 1.2rem; font-weight: 800; }
+    .panel-title.maths { color: #6366f1; }
+    .panel-title.pc    { color: #0891b2; }
+    .panel-stats { font-size: 0.8rem; color: #64748b; margin-top: 0.15rem; }
+
+    .reset-btn {
+      font-size: 0.75rem;
+      padding: 4px 12px;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      background: #f8fafc;
+      cursor: pointer;
+      color: #64748b;
+      flex-shrink: 0;
+    }
+    .reset-btn:hover { background: #fee2e2; color: #b91c1c; border-color: #fca5a5; }
+
+    /* Progress bars */
+    .progress-wrap {
+      height: 8px;
+      border-radius: 4px;
+      background: #e2e8f0;
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%;
+      border-radius: 4px;
+      width: 0%;
+      transition: width 0.4s;
+    }
+    .progress-bar.maths { background: #6366f1; }
+    .progress-bar.pc    { background: #0891b2; }
+
+    /* Theme sections */
+    .theme-section { margin-bottom: 1.4rem; }
+
+    .theme-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.35rem;
+      gap: 0.5rem;
+    }
+    .theme-title {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #1e293b;
+      flex: 1;
+    }
+    .theme-badge {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #e2e8f0;
+      color: #475569;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .theme-badge.complete { background: #bbf7d0; color: #166534; }
+
+    .theme-progress-wrap {
+      height: 4px;
+      border-radius: 2px;
+      background: #e2e8f0;
+      margin-bottom: 0.5rem;
+      overflow: hidden;
+    }
+    .theme-progress-bar {
+      height: 100%;
+      border-radius: 2px;
+      width: 0%;
+      transition: width 0.3s;
+      background: #6366f1;
+    }
+    .theme-progress-bar.done { background: #22c55e; }
+
+    /* Items */
+    ul.items { list-style: none; }
+
+    .item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      padding: 0.35rem 0.5rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .item:hover { background: #f8fafc; }
+    .item.checked { background: #f0fdf4; }
+
+    .item input[type="checkbox"] {
+      margin-top: 2px;
+      accent-color: #22c55e;
+      cursor: pointer;
+      flex-shrink: 0;
+      width: 16px;
+      height: 16px;
+    }
+
+    .item-label {
+      font-size: 0.875rem;
+      color: #334155;
+      line-height: 1.5;
+      user-select: none;
+    }
+    .item.checked .item-label {
+      color: #15803d;
+      text-decoration: line-through;
+    }
+
+    hr.sep { border: none; border-top: 1px solid #f1f5f9; margin: 1rem 0; }
+  </style>
+</head>
+<body>
+<div id="app">
+  <h1>✅ Checklist Révision — Baccalauréat</h1>
+  <p class="subtitle">Coche chaque compétence au fur et à mesure de tes révisions. Ta progression est sauvegardée sur cet appareil.</p>
+
+  <div class="tabs">
+    <button class="tab-btn active-maths" id="btn-maths">📐 Mathématiques</button>
+    <button class="tab-btn" id="btn-pc">⚗️ Physique-Chimie</button>
+  </div>
+
+  <div id="panel-maths" class="panel">
+    <div class="panel-header">
+      <div>
+        <div class="panel-title maths">Mathématiques</div>
+        <div class="panel-stats" id="stats-maths">0 / 0 compétences — 0%</div>
+      </div>
+      <button class="reset-btn" id="reset-maths">Réinitialiser</button>
+    </div>
+    <div class="progress-wrap"><div class="progress-bar maths" id="bar-maths"></div></div>
+    <div id="content-maths"></div>
+  </div>
+
+  <div id="panel-pc" class="panel hidden">
+    <div class="panel-header">
+      <div>
+        <div class="panel-title pc">Physique-Chimie</div>
+        <div class="panel-stats" id="stats-pc">0 / 0 compétences — 0%</div>
+      </div>
+      <button class="reset-btn" id="reset-pc">Réinitialiser</button>
+    </div>
+    <div class="progress-wrap"><div class="progress-bar pc" id="bar-pc"></div></div>
+    <div id="content-pc"></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ── DATA ─────────────────────────────────────────────────────────── */
+  const MATHS = [
+    {
+      theme: "Algèbre et géométrie — Combinatoire et dénombrement",
+      items: [
+        "Utiliser le principe additif (réunion d'ensembles disjoints)",
+        "Utiliser le principe multiplicatif (produit cartésien, k-uplets)",
+        "Calculer le nombre de parties d'un ensemble à n éléments",
+        "Calculer le nombre de k-uplets d'éléments distincts ; définir n!",
+        "Calculer le nombre de permutations d'un ensemble fini",
+        "Calculer les coefficients binomiaux C(n,k) avec les formules",
+        "Connaître les cas k=0,1,2 ; utiliser la symétrie et le triangle de Pascal",
+        "Démontrer la relation de Pascal (par le calcul ou combinatoirement)",
+        "Démontrer ∑C(n,k) = 2ⁿ par dénombrement",
+        "Utiliser une représentation adaptée (arbres, tableaux, diagrammes)",
+        "Effectuer des dénombrements en informatique, génétique, probabilités…",
+      ],
+    },
+    {
+      theme: "Algèbre et géométrie — Vecteurs, droites et plans de l'espace",
+      items: [
+        "Manipuler les vecteurs de l'espace et les translations",
+        "Effectuer des combinaisons linéaires de vecteurs",
+        "Caractériser une droite par un point et un vecteur directeur",
+        "Identifier des vecteurs colinéaires",
+        "Caractériser un plan par un point et deux vecteurs non colinéaires",
+        "Décomposer un vecteur dans une base de l'espace",
+        "Décrire la position relative de deux droites, d'une droite et d'un plan, de deux plans",
+        "Lire sur une figure si des vecteurs forment une base",
+        "Étudier des configurations dans l'espace (alignement, coplanarité, parallélisme)",
+      ],
+    },
+    {
+      theme: "Algèbre et géométrie — Orthogonalité et distances dans l'espace",
+      items: [
+        "Calculer le produit scalaire de deux vecteurs (bilinéarité, symétrie)",
+        "Caractériser l'orthogonalité par le produit scalaire",
+        "Utiliser une base orthonormée et un repère orthonormé",
+        "Exprimer le produit scalaire et la norme en coordonnées",
+        "Calculer la distance entre deux points",
+        "Développer ‖u+v‖² ; utiliser les formules de polarisation",
+        "Étudier l'orthogonalité de deux droites, d'un plan et d'une droite",
+        "Déterminer un vecteur normal à un plan",
+        "Trouver le projeté orthogonal d'un point sur une droite ou un plan",
+        "Démontrer que le projeté orthogonal est le point le plus proche",
+        "Résoudre des problèmes de longueur, angle, aire, volume dans l'espace",
+      ],
+    },
+    {
+      theme: "Algèbre et géométrie — Représentations paramétriques et équations cartésiennes",
+      items: [
+        "Déterminer et reconnaître une représentation paramétrique d'une droite",
+        "Déterminer l'équation cartésienne d'un plan (vecteur normal + point)",
+        "Reconnaître un plan donné par une équation cartésienne",
+        "Calculer les coordonnées du projeté orthogonal d'un point sur un plan",
+        "Traduire des problèmes géométriques en systèmes d'équations linéaires",
+        "Résoudre des systèmes simples et interpréter géométriquement les solutions",
+        "Démontrer l'équation du plan normal à n⃗ passant par A",
+      ],
+    },
+    {
+      theme: "Analyse — Suites",
+      items: [
+        "Définir la convergence et la divergence d'une suite (définition formelle)",
+        "Utiliser les théorèmes de comparaison et le théorème des gendarmes",
+        "Effectuer des opérations sur les limites de suites",
+        "Étudier le comportement d'une suite géométrique (qⁿ)",
+        "Appliquer le théorème : toute suite croissante majorée converge",
+        "Démontrer qu'une suite croissante non majorée tend vers +∞",
+        "Raisonner par récurrence pour établir une propriété d'une suite",
+        "Étudier des phénomènes d'évolution modélisables par une suite",
+        "Utiliser un algorithme de recherche de seuils",
+      ],
+    },
+    {
+      theme: "Analyse — Limites des fonctions",
+      items: [
+        "Calculer la limite finie ou infinie d'une fonction en un point ou en ±∞",
+        "Identifier les asymptotes parallèles aux axes",
+        "Utiliser les limites des fonctions de référence (puissances, racine, exp)",
+        "Appliquer les théorèmes de comparaison pour les fonctions",
+        "Effectuer des opérations sur les limites de fonctions",
+        "Connaître et utiliser les croissances comparées (xⁿ vs exp en +∞)",
+      ],
+    },
+    {
+      theme: "Analyse — Compléments sur la dérivation",
+      items: [
+        "Calculer la dérivée d'une fonction composée v∘u : (v∘u)' = (v'∘u)×u'",
+        "Calculer la dérivée seconde d'une fonction",
+        "Définir la convexité (position par rapport aux sécantes)",
+        "Équivalences pour une fonction deux fois dérivable : convexité ↔ f'' ≥ 0 ↔ f' croissante ↔ courbe au-dessus des tangentes",
+        "Identifier et calculer un point d'inflexion",
+        "Démontrer des inégalités par convexité",
+        "Lire convexité et inflexions sur les graphes de f, f', f''",
+      ],
+    },
+    {
+      theme: "Analyse — Continuité",
+      items: [
+        "Définir la continuité en un point (par les limites) et sur un intervalle",
+        "Savoir que toute fonction dérivable est continue",
+        "Utiliser l'image d'une suite convergente par une fonction continue",
+        "Appliquer le théorème des valeurs intermédiaires (TVI)",
+        "Étudier l'existence, l'unicité et l'encadrement des solutions de f(x) = k",
+        "Étudier une suite définie par u_{n+1} = f(u_n) pour f continue sur un intervalle",
+        "Implémenter et utiliser la méthode de dichotomie",
+      ],
+    },
+    {
+      theme: "Analyse — Fonction logarithme",
+      items: [
+        "Définir ln comme réciproque de l'exponentielle",
+        "Connaître et utiliser les propriétés algébriques de ln",
+        "Calculer la dérivée de ln et étudier ses variations",
+        "Connaître les limites en 0 et en +∞ et la courbe représentative",
+        "Utiliser les croissances comparées de ln et xⁿ en 0 et en +∞",
+        "Résoudre des équations et inéquations avec ln et exp",
+        "Démontrer : lim(x→0) x·ln(x) = 0",
+      ],
+    },
+    {
+      theme: "Analyse — Fonctions sinus et cosinus",
+      items: [
+        "Connaître les dérivées de sin et cos",
+        "Connaître les variations et courbes de sin et cos",
+        "Résoudre cos(x) = a et des inéquations du type cos(x) ≤ a sur [−π, π]",
+        "Étudier une fonction construite à partir de fonctions trig (variations, optimum)",
+      ],
+    },
+    {
+      theme: "Analyse — Primitives et équations différentielles",
+      items: [
+        "Définir la notion de primitive ; deux primitives diffèrent d'une constante",
+        "Connaître les primitives des fonctions de référence (xⁿ, 1/√x, exp, sin, cos)",
+        "Calculer une primitive de fonctions de la forme (v'∘u)×u'",
+        "Résoudre y' = ay (solutions : Ce^(ax))",
+        "Résoudre y' = ay + b (chercher solution constante particulière, puis générale)",
+        "Résoudre y' = ay + f à partir d'une solution particulière donnée",
+        "Démontrer la résolution de y' = ay",
+        "Utiliser la méthode d'Euler (algorithme)",
+      ],
+    },
+    {
+      theme: "Analyse — Calcul intégral",
+      items: [
+        "Définir l'intégrale d'une fonction continue positive comme aire sous la courbe",
+        "Connaître et utiliser le théorème fondamental : F_a'(x) = f(x)",
+        "Calculer ∫[a,b] f(x)dx = F(b) − F(a)",
+        "Connaître la linéarité, la positivité et la relation de Chasles",
+        "Calculer une valeur moyenne d'une fonction",
+        "Utiliser l'intégration par parties",
+        "Majorer ou minorer une intégrale par encadrement de la fonction",
+        "Calculer l'aire entre deux courbes",
+        "Estimer graphiquement ou encadrer une intégrale",
+        "Étudier une suite d'intégrales (éventuellement par récurrence)",
+        "Implémenter la méthode des rectangles (algorithme)",
+      ],
+    },
+    {
+      theme: "Probabilités — Succession d'épreuves indépendantes et schéma de Bernoulli",
+      items: [
+        "Modéliser une succession d'épreuves indépendantes (propriété multiplicative)",
+        "Calculer des probabilités via l'indépendance, les probabilités conditionnelles, la formule des probabilités totales",
+        "Identifier et modéliser un schéma de Bernoulli",
+        "Connaître la loi binomiale B(n,p) et exprimer P(X=k) avec les coefficients binomiaux",
+        "Résoudre des problèmes de seuil, comparaison, optimisation avec la loi binomiale",
+        "Calculer P(X=k), P(X≤k), P(k≤X≤k') numériquement ou par algorithme",
+        "Démontrer la formule P(X=k) dans le schéma de Bernoulli",
+      ],
+    },
+    {
+      theme: "Probabilités — Sommes de variables aléatoires",
+      items: [
+        "Utiliser la linéarité de l'espérance : E(X+Y) = E(X)+E(Y), E(aX) = aE(X)",
+        "Utiliser l'additivité de la variance pour des variables indépendantes : V(X+Y) = V(X)+V(Y)",
+        "Connaître V(aX) = a²V(X)",
+        "Calculer espérance, variance et écart-type de la loi binomiale",
+        "Définir un échantillon de taille n ; calculer espérance, variance, écart-type de S_n et M_n",
+        "Démontrer E(B(n,p)) = np et V(B(n,p)) = np(1−p)",
+      ],
+    },
+    {
+      theme: "Probabilités — Concentration et loi des grands nombres",
+      items: [
+        "Énoncer et appliquer l'inégalité de Bienaymé-Tchebychev",
+        "Énoncer et appliquer l'inégalité de concentration pour M_n",
+        "Énoncer la loi des grands nombres",
+        "Déterminer une taille d'échantillon en fonction d'une précision et d'un risque donnés",
+      ],
+    },
+    {
+      theme: "Algorithmique et programmation",
+      items: [
+        "Générer une liste en extension, par ajouts successifs ou en compréhension (Python)",
+        "Manipuler les éléments d'une liste (ajouter, supprimer, indices)",
+        "Parcourir et itérer sur une liste",
+        "Écrire un algorithme de recherche de seuil",
+        "Implémenter la méthode de dichotomie",
+        "Implémenter la méthode d'Euler pour y'=f et y'=ay+b",
+        "Générer les coefficients du triangle de Pascal par algorithme",
+        "Simuler un échantillon d'une variable aléatoire",
+        "Utiliser la programmation modulaire (fonctions)",
+      ],
+    },
+    {
+      theme: "Vocabulaire ensembliste et logique",
+      items: [
+        "Maîtriser appartenance (∈), inclusion (⊂), réunion (∪), intersection (∩), complémentaire",
+        "Utiliser la notation des ensembles de nombres et des intervalles",
+        "Connaître couple, triplet, n-uplet, produit cartésien",
+        "Formuler et nier des propositions (avec quantificateurs ∀, ∃)",
+        "Mobiliser un contre-exemple pour réfuter une proposition",
+        "Formuler et utiliser une implication, une équivalence, la réciproque, la contraposée",
+        "Raisonner par disjonction des cas, par l'absurde, par contraposée",
+        "Distinguer condition nécessaire et condition suffisante",
+        "Démontrer une propriété par récurrence",
+      ],
+    },
+  ];
+
+  const PHYSIQUE = [
+    {
+      theme: "Mesure et incertitudes",
+      items: [
+        "Exploiter une série de mesures : histogramme, moyenne, écart-type",
+        "Discuter de l'influence de l'instrument et du protocole sur la mesure",
+        "Définir qualitativement une incertitude-type",
+        "Évaluer une incertitude-type par approche statistique (type A)",
+        "Évaluer une incertitude-type par une approche non statistique (type B)",
+        "Calculer une incertitude-type composée à partir d'une formule fournie",
+        "Écrire le résultat d'une mesure avec le bon nombre de chiffres significatifs",
+        "Comparer un résultat à une valeur de référence via le critère |m_mes − m_ref| / u(m)",
+      ],
+    },
+    {
+      theme: "Constitution et transformations de la matière — Réactions acide-base",
+      items: [
+        "Identifier un transfert d'ion H⁺, les couples acide-base et écrire l'équation de réaction",
+        "Représenter le schéma de Lewis et formule semi-développée d'acides carboxyliques, ions carboxylate, amines, ions ammonium",
+        "Identifier le caractère amphotère d'une espèce chimique",
+        "Calculer le pH à partir de [H₃O⁺] et inversement (pH = −log([H₃O⁺]/c°))",
+        "Exploiter la loi de Beer-Lambert pour déterminer une concentration",
+        "Exploiter la loi de Kohlrausch (conductivité) pour déterminer une concentration",
+        "Exploiter l'équation d'état du gaz parfait pour déterminer une concentration",
+        "Identifier un groupe caractéristique par spectroscopie IR ou UV-visible",
+        "Mettre en œuvre un titrage avec suivi pH-métrique",
+        "Mettre en œuvre un titrage avec suivi conductimétrique",
+        "Établir la composition du système après ajout d'un volume de solution titrante",
+        "Exploiter un titrage pour déterminer une quantité de matière, une concentration ou une masse",
+      ],
+    },
+    {
+      theme: "Constitution et transformations de la matière — Cinétique chimique",
+      items: [
+        "Justifier le choix d'un capteur de suivi temporel",
+        "Identifier des facteurs cinétiques (température, concentration) à partir de données expérimentales",
+        "Citer les propriétés d'un catalyseur ; identifier un catalyseur expérimentalement",
+        "Calculer une vitesse volumique de disparition d'un réactif ou d'apparition d'un produit",
+        "Déterminer un temps de demi-réaction",
+        "Identifier si une concentration suit une loi de vitesse d'ordre 1",
+        "Identifier un intermédiaire réactionnel dans un mécanisme fourni",
+        "Représenter les flèches courbes d'un acte élémentaire",
+        "Interpréter l'influence des concentrations et de la température en termes de chocs entre entités",
+      ],
+    },
+    {
+      theme: "Constitution et transformations de la matière — Décroissance radioactive",
+      items: [
+        "Utiliser le diagramme (N,Z) pour identifier les isotopes radioactifs",
+        "Écrire une équation de réaction nucléaire (radioactivité α, β, γ) avec les lois de conservation",
+        "Établir l'expression de l'évolution temporelle N(t) = N₀·e^(−λt)",
+        "Exploiter la loi et une courbe de décroissance radioactive",
+        "Résoudre l'équation différentielle dN/dt = −λN",
+        "Expliquer le principe de la datation radioactive",
+        "Citer des applications médicales de la radioactivité",
+        "Citer des méthodes de protection contre les rayonnements ionisants",
+      ],
+    },
+    {
+      theme: "Constitution et transformations de la matière — Équilibres chimiques et piles",
+      items: [
+        "Relier le caractère non total d'une transformation à la présence de tous les réactifs à l'état final",
+        "Calculer le quotient de réaction Qr et le comparer à K(T)",
+        "Déterminer le sens d'évolution spontanée d'un système",
+        "Calculer un taux d'avancement final",
+        "Modéliser et schématiser le fonctionnement d'une pile",
+        "Justifier la stratégie des deux demi-piles et du pont salin",
+        "Déterminer la capacité électrique d'une pile",
+        "Citer des oxydants et réducteurs usuels",
+        "Associer K_A et K_e aux équations de réactions correspondantes",
+        "Calculer le pH de solutions d'acides forts ou faibles",
+        "Comparer la force de différents acides/bases dans l'eau",
+        "Représenter et exploiter un diagramme de prédominance d'un couple acide-base",
+        "Justifier le choix d'un indicateur coloré lors d'un titrage",
+        "Citer les propriétés d'une solution tampon",
+        "Modéliser le fonctionnement d'un électrolyseur ; relier durée, intensité et quantité de matière",
+      ],
+    },
+    {
+      theme: "Constitution et transformations de la matière — Synthèse organique",
+      items: [
+        "Utiliser des règles de nomenclature fournies pour nommer ou représenter une espèce",
+        "Représenter des formules topologiques et des isomères de constitution",
+        "Identifier le motif d'un polymère ; citer des polymères naturels et synthétiques",
+        "Identifier les opérations d'optimisation de la vitesse dans un protocole",
+        "Justifier l'augmentation du rendement par excès d'un réactif ou élimination d'un produit",
+        "Élaborer une séquence réactionnelle à partir d'une banque de réactions",
+        "Identifier des réactions d'oxydo-réduction, acide-base, substitution, addition, élimination",
+        "Identifier des étapes de protection/déprotection et justifier leur intérêt",
+        "Discuter l'impact environnemental d'une synthèse et proposer des améliorations",
+      ],
+    },
+    {
+      theme: "Mouvement et interactions — Décrire un mouvement",
+      items: [
+        "Définir les vecteurs vitesse et accélération comme dérivées successives du vecteur position",
+        "Établir les coordonnées cartésiennes de v⃗ et a⃗ à partir de celles de OM⃗",
+        "Exprimer les coordonnées de v⃗ et a⃗ dans le repère de Frenet (mouvement circulaire)",
+        "Caractériser a⃗ pour un mouvement rectiligne, circulaire, ou uniformément accéléré",
+        "Exploiter une vidéo ou chronophotographie pour déterminer les vecteurs vitesse et accélération",
+      ],
+    },
+    {
+      theme: "Mouvement et interactions — 2ème loi de Newton",
+      items: [
+        "Énoncer la deuxième loi de Newton et l'utiliser dans des situations variées",
+        "Déterminer le vecteur accélération connaissant les forces, et inversement",
+        "Discuter qualitativement du caractère galiléen d'un référentiel",
+        "Justifier qualitativement la position du centre de masse",
+      ],
+    },
+    {
+      theme: "Mouvement et interactions — Mouvements dans des champs uniformes",
+      items: [
+        "Montrer que le mouvement dans un champ uniforme est plan",
+        "Établir et exploiter les équations horaires du mouvement (champ de pesanteur, champ électrique)",
+        "Établir l'équation de la trajectoire",
+        "Exploiter la conservation de l'énergie mécanique ou le théorème de l'énergie cinétique",
+        "Résoudre une équation différentielle du mouvement",
+        "Décrire le principe d'un accélérateur linéaire de particules chargées",
+      ],
+    },
+    {
+      theme: "Mouvement et interactions — Mouvement dans un champ de gravitation",
+      items: [
+        "Caractériser les vecteurs vitesse et accélération d'un satellite en orbite circulaire",
+        "Établir et exploiter la 3ème loi de Kepler pour un mouvement circulaire",
+        "Distinguer orbite circulaire, elliptique, satellite géostationnaire",
+      ],
+    },
+    {
+      theme: "Mouvement et interactions — Dynamique des fluides",
+      items: [
+        "Expliquer qualitativement l'origine de la poussée d'Archimède",
+        "Utiliser l'expression vectorielle de la poussée d'Archimède",
+        "Exploiter la conservation du débit volumique d'un fluide incompressible",
+        "Exploiter la relation de Bernoulli pour étudier un écoulement (effet Venturi)",
+      ],
+    },
+    {
+      theme: "L'énergie : conversions et transferts",
+      items: [
+        "Exploiter l'équation d'état du gaz parfait ; en identifier les limites",
+        "Relier les grandeurs macroscopiques aux propriétés microscopiques",
+        "Prévoir le sens d'un transfert thermique",
+        "Appliquer le premier principe de la thermodynamique pour effectuer un bilan d'énergie",
+        "Exploiter la relation ΔU = mCΔT pour un système incompressible",
+        "Caractériser qualitativement les 3 modes de transfert thermique (conduction, convection, rayonnement)",
+        "Exploiter la relation flux thermique / résistance thermique / écart de température",
+        "Effectuer un bilan thermique du système Terre-atmosphère (loi de Stefan-Boltzmann fournie)",
+        "Discuter de l'influence de l'albédo et de l'effet de serre",
+        "Établir et résoudre l'équation différentielle de la loi de Newton (refroidissement/échauffement)",
+        "Déterminer le temps caractéristique d'un système thermique",
+      ],
+    },
+    {
+      theme: "Ondes et signaux — Phénomènes ondulatoires",
+      items: [
+        "Exploiter l'expression du niveau d'intensité sonore (en dB, avec logarithme)",
+        "Caractériser le phénomène de diffraction et citer des conséquences concrètes",
+        "Exploiter la relation pour l'angle caractéristique de diffraction (λ/a)",
+        "Caractériser le phénomène d'interférences constructives et destructives",
+        "Établir les conditions d'interférences (différence de chemin optique, sources en phase)",
+        "Calculer l'interfrange dans le cas des trous d'Young",
+        "Exploiter l'expression de l'interfrange",
+        "Décrire et interpréter l'effet Doppler (observateur fixe, émetteur mobile)",
+        "Établir et exploiter l'expression du décalage Doppler (acoustique et électromagnétique)",
+      ],
+    },
+    {
+      theme: "Ondes et signaux — Former des images / lumière et photons",
+      items: [
+        "Schématiser une lunette afocale (objectif + oculaire convergents)",
+        "Établir et exploiter l'expression du grossissement d'une lunette afocale",
+        "Décrire l'effet photoélectrique et ses caractéristiques historiques",
+        "Interpréter qualitativement l'effet photoélectrique par le modèle particulaire",
+        "Établir par bilan d'énergie la relation entre E_c des électrons et la fréquence",
+        "Citer des applications de l'interaction photon-matière (cellules PV, DEL, spectroscopies…)",
+        "Déterminer le rendement d'une cellule photovoltaïque",
+      ],
+    },
+    {
+      theme: "Ondes et signaux — Dynamique d'un système électrique (circuit RC)",
+      items: [
+        "Relier l'intensité d'un courant électrique au débit de charges",
+        "Identifier des situations de comportement capacitif",
+        "Connaître la relation Q = CU pour un condensateur",
+        "Établir et résoudre l'équation différentielle de charge/décharge d'un condensateur",
+        "Déterminer le temps caractéristique τ = RC",
+        "Expliquer le principe de fonctionnement de capteurs capacitifs",
+      ],
+    },
+  ];
+
+  /* ── STORAGE ──────────────────────────────────────────────────────── */
+  const STORAGE_KEY = "bac_checklist_v2";
+
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return {};
+      const parsed = JSON.parse(raw);
+      if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) return {};
+      return parsed;
+    } catch (_) {
+      return {};
+    }
+  }
+
+  function saveState(state) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch (_) { /* storage full or unavailable — silently ignore */ }
+  }
+
+  /* ── STATE ────────────────────────────────────────────────────────── */
+  const globalState = loadState();
+  if (!globalState.Mathématiques) globalState.Mathématiques = {};
+  if (!globalState["Physique-Chimie"]) globalState["Physique-Chimie"] = {};
+
+  /* ── RENDER HELPERS ───────────────────────────────────────────────── */
+  function escapeText(str) {
+    const div = document.createElement("div");
+    div.appendChild(document.createTextNode(str));
+    return div.innerHTML;
+  }
+
+  function buildPanel(subjectKey, data, containerId, statsId, barId) {
+    const container = document.getElementById(containerId);
+    const statsEl   = document.getElementById(statsId);
+    const barEl     = document.getElementById(barId);
+    const checks    = globalState[subjectKey];
+
+    /* total competences */
+    let grandTotal = 0;
+    data.forEach(function(t) { grandTotal += t.items.length; });
+
+    function countDone() {
+      return Object.values(checks).filter(Boolean).length;
+    }
+
+    function updateGlobalBar() {
+      const done = countDone();
+      const pct  = grandTotal === 0 ? 0 : Math.round((done / grandTotal) * 100);
+      statsEl.textContent = done + " / " + grandTotal + " compétences maîtrisées — " + pct + "%";
+      barEl.style.width   = pct + "%";
+    }
+
+    data.forEach(function(section, ti) {
+      const total = section.items.length;
+
+      /* section wrapper */
+      const sectionEl = document.createElement("div");
+      sectionEl.className = "theme-section";
+
+      /* header */
+      const header = document.createElement("div");
+      header.className = "theme-header";
+
+      const titleEl = document.createElement("div");
+      titleEl.className = "theme-title";
+      titleEl.textContent = section.theme;
+
+      const badge = document.createElement("span");
+      badge.className = "theme-badge";
+
+      header.appendChild(titleEl);
+      header.appendChild(badge);
+      sectionEl.appendChild(header);
+
+      /* theme progress bar */
+      const themeWrap = document.createElement("div");
+      themeWrap.className = "theme-progress-wrap";
+      const themeBar = document.createElement("div");
+      themeBar.className = "theme-progress-bar";
+      themeWrap.appendChild(themeBar);
+      sectionEl.appendChild(themeWrap);
+
+      function updateTheme() {
+        let done = 0;
+        for (let i = 0; i < total; i++) {
+          if (checks[ti + "_" + i]) done++;
+        }
+        const pct = total === 0 ? 0 : Math.round((done / total) * 100);
+        badge.textContent = done + "/" + total;
+        badge.className   = "theme-badge" + (pct === 100 ? " complete" : "");
+        themeBar.style.width = pct + "%";
+        themeBar.className   = "theme-progress-bar" + (pct === 100 ? " done" : "");
+      }
+
+      /* items list */
+      const ul = document.createElement("ul");
+      ul.className = "items";
+
+      section.items.forEach(function(text, i) {
+        const key = ti + "_" + i;
+
+        const li = document.createElement("li");
+        li.className = "item" + (checks[key] ? " checked" : "");
+
+        const cb = document.createElement("input");
+        cb.type    = "checkbox";
+        cb.checked = !!checks[key];
+
+        const label = document.createElement("span");
+        label.className = "item-label";
+        label.textContent = text;
+
+        li.appendChild(cb);
+        li.appendChild(label);
+
+        function toggle() {
+          checks[key] = !checks[key];
+          cb.checked = checks[key];
+          li.className = "item" + (checks[key] ? " checked" : "");
+          globalState[subjectKey] = checks;
+          saveState(globalState);
+          updateTheme();
+          updateGlobalBar();
+        }
+
+        /* click on row toggles checkbox */
+        li.addEventListener("click", function(e) {
+          /* avoid double-firing when clicking directly on the checkbox */
+          if (e.target !== cb) {
+            toggle();
+          }
+        });
+        cb.addEventListener("change", toggle);
+
+        ul.appendChild(li);
+      });
+
+      sectionEl.appendChild(ul);
+
+      /* separator between themes */
+      if (ti < data.length - 1) {
+        const hr = document.createElement("hr");
+        hr.className = "sep";
+        sectionEl.appendChild(hr);
+      }
+
+      container.appendChild(sectionEl);
+      updateTheme();
+    });
+
+    updateGlobalBar();
+  }
+
+  /* ── RESET ────────────────────────────────────────────────────────── */
+  function wireReset(btnId, subjectKey, containerId, statsId, barId) {
+    document.getElementById(btnId).addEventListener("click", function() {
+      if (!confirm("Réinitialiser toute la progression pour cette matière ?")) return;
+      globalState[subjectKey] = {};
+      saveState(globalState);
+      /* Rebuild the panel from scratch */
+      document.getElementById(containerId).innerHTML = "";
+      const dataset = subjectKey === "Mathématiques" ? MATHS : PHYSIQUE;
+      buildPanel(subjectKey, dataset, containerId, statsId, barId);
+    });
+  }
+
+  /* ── TABS ─────────────────────────────────────────────────────────── */
+  const btnMaths = document.getElementById("btn-maths");
+  const btnPc    = document.getElementById("btn-pc");
+  const panelM   = document.getElementById("panel-maths");
+  const panelP   = document.getElementById("panel-pc");
+
+  function showMaths() {
+    panelM.classList.remove("hidden");
+    panelP.classList.add("hidden");
+    btnMaths.className = "tab-btn active-maths";
+    btnPc.className    = "tab-btn";
+  }
+  function showPc() {
+    panelP.classList.remove("hidden");
+    panelM.classList.add("hidden");
+    btnPc.className    = "tab-btn active-pc";
+    btnMaths.className = "tab-btn";
+  }
+
+  btnMaths.addEventListener("click", showMaths);
+  btnPc.addEventListener("click", showPc);
+
+  /* ── INIT ─────────────────────────────────────────────────────────── */
+  buildPanel("Mathématiques",   MATHS,   "content-maths", "stats-maths", "bar-maths");
+  buildPanel("Physique-Chimie", PHYSIQUE, "content-pc",   "stats-pc",    "bar-pc");
+
+  wireReset("reset-maths", "Mathématiques",   "content-maths", "stats-maths", "bar-maths");
+  wireReset("reset-pc",    "Physique-Chimie", "content-pc",    "stats-pc",    "bar-pc");
+
+})();
+</script>
+</body>
+</html>
