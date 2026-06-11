@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cartographie Philosophie — Révision Bac</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f1117;
+      --card: #1a1d27;
+      --card-hover: #222632;
+      --accent: #818cf8;
+      --accent-soft: #6366f1;
+      --text: #e8eaf0;
+      --muted: #9aa0b0;
+      --border: #2a2e3c;
+      --author: #fbbf24;
+      --distinction: #34d399;
+      --problem: #f472b6;
+      --bridge: #60a5fa;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 1.25rem 1rem 4rem;
+      line-height: 1.5;
+    }
+
+    #app { max-width: 820px; margin: 0 auto; }
+
+    header.main { text-align: center; margin-bottom: 1.25rem; }
+    h1 { font-size: 1.45rem; font-weight: 800; margin-bottom: 0.3rem; }
+    .subtitle { color: var(--muted); font-size: 0.85rem; }
+
+    /* Search */
+    .search-wrap { margin-bottom: 1rem; position: relative; }
+    #search {
+      width: 100%;
+      padding: 0.7rem 1rem;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      font-size: 0.95rem;
+    }
+    #search::placeholder { color: var(--muted); }
+    #search:focus { outline: none; border-color: var(--accent); }
+
+    /* Legend */
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      justify-content: center;
+      margin-bottom: 1.25rem;
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+    .legend span { display: inline-flex; align-items: center; gap: 4px; }
+    .dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+    .dot.author { background: var(--author); }
+    .dot.distinction { background: var(--distinction); }
+    .dot.problem { background: var(--problem); }
+    .dot.bridge { background: var(--bridge); }
+
+    /* Notion cards */
+    .notion {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      margin-bottom: 0.75rem;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .notion.open { border-color: var(--accent-soft); }
+    .notion.hidden { display: none; }
+
+    .notion-head {
+      padding: 0.95rem 1.1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .notion-head:hover { background: var(--card-hover); }
+
+    .notion-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .notion-icon { font-size: 1.15rem; }
+
+    .chevron {
+      color: var(--muted);
+      transition: transform 0.25s;
+      flex-shrink: 0;
+      font-size: 0.9rem;
+    }
+    .notion.open .chevron { transform: rotate(90deg); }
+
+    .notion-body {
+      padding: 0 1.1rem;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+    }
+    .notion.open .notion-body {
+      padding: 0 1.1rem 1.1rem;
+      max-height: 6000px;
+    }
+
+    .essence {
+      font-size: 0.9rem;
+      color: var(--text);
+      font-style: italic;
+      padding: 0.6rem 0.85rem;
+      background: rgba(129,140,248,0.08);
+      border-left: 3px solid var(--accent-soft);
+      border-radius: 0 6px 6px 0;
+      margin-bottom: 1rem;
+    }
+
+    .block { margin-bottom: 1rem; }
+    .block:last-child { margin-bottom: 0; }
+    .block-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .block-label.authors { color: var(--author); }
+    .block-label.distinctions { color: var(--distinction); }
+    .block-label.problems { color: var(--problem); }
+    .block-label.bridges { color: var(--bridge); }
+
+    .author-item {
+      padding: 0.5rem 0.7rem;
+      background: rgba(251,191,36,0.07);
+      border-radius: 7px;
+      margin-bottom: 0.4rem;
+      font-size: 0.85rem;
+    }
+    .author-item strong { color: var(--author); }
+    .author-item .thesis { color: var(--text); }
+    .author-item .quote {
+      display: block;
+      margin-top: 0.25rem;
+      color: var(--muted);
+      font-style: italic;
+      font-size: 0.8rem;
+    }
+
+    .dist-item {
+      font-size: 0.85rem;
+      padding: 0.4rem 0.7rem;
+      margin-bottom: 0.35rem;
+      background: rgba(52,211,153,0.06);
+      border-radius: 7px;
+    }
+    .dist-item b { color: var(--distinction); }
+
+    .problem-item {
+      font-size: 0.85rem;
+      padding: 0.55rem 0.7rem;
+      margin-bottom: 0.45rem;
+      background: rgba(244,114,182,0.06);
+      border-radius: 7px;
+      border-left: 2px solid var(--problem);
+    }
+    .problem-item .q { font-weight: 600; color: var(--text); display: block; margin-bottom: 0.2rem; }
+    .problem-item .axes { color: var(--muted); font-size: 0.8rem; }
+
+    .bridges-list { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .bridge-chip {
+      font-size: 0.78rem;
+      padding: 0.3rem 0.65rem;
+      background: rgba(96,165,250,0.1);
+      color: var(--bridge);
+      border: 1px solid rgba(96,165,250,0.25);
+      border-radius: 999px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .bridge-chip:hover { background: rgba(96,165,250,0.2); }
+
+    .controls {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      justify-content: center;
+    }
+    .ctrl-btn {
+      font-size: 0.78rem;
+      padding: 0.4rem 0.9rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--muted);
+      cursor: pointer;
+    }
+    .ctrl-btn:hover { background: var(--card-hover); color: var(--text); }
+
+    .no-result {
+      text-align: center;
+      color: var(--muted);
+      padding: 2rem;
+      font-size: 0.9rem;
+      display: none;
+    }
+
+    footer.tip {
+      margin-top: 1.5rem;
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+  <header class="main">
+    <h1>🗺️ Cartographie Philosophie</h1>
+    <p class="subtitle">Notions, auteurs, distinctions et passerelles — clique pour déplier</p>
+  </header>
+
+  <div class="search-wrap">
+    <input type="text" id="search" placeholder="Rechercher une notion, un auteur, un concept…" autocomplete="off">
+  </div>
+
+  <div class="legend">
+    <span><i class="dot author"></i>Auteurs &amp; thèses</span>
+    <span><i class="dot distinction"></i>Distinctions clés</span>
+    <span><i class="dot problem"></i>Problématiques</span>
+    <span><i class="dot bridge"></i>Passerelles</span>
+  </div>
+
+  <div class="controls">
+    <button class="ctrl-btn" id="expand-all">Tout déplier</button>
+    <button class="ctrl-btn" id="collapse-all">Tout replier</button>
+  </div>
+
+  <div id="map"></div>
+  <div class="no-result" id="no-result">Aucune notion ne correspond à ta recherche.</div>
+
+  <footer class="tip">
+    Astuce dissertation : les sujets croisent souvent plusieurs notions.<br>
+    Suis les passerelles bleues pour relier tes connaissances.
+  </footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ════════════ DONNÉES (fidèles au cours) ════════════ */
+  const NOTIONS = [
+    {
+      id: "verite",
+      icon: "🔍",
+      title: "La vérité, la science, la raison",
+      essence: "La vérité est la qualité du jugement conforme à la réalité (à ne pas confondre avec la réalité elle-même). Étymologiquement aléthéia : le non-oubli, le dévoilement.",
+      authors: [
+        { name: "Platon", thesis: "Théorie de la réminiscence (Ménon) : connaître, c'est se ressouvenir. Réalisme idéaliste : seule l'Idée (Essence) a de l'être, le sensible n'en est qu'une ombre (allégorie de la caverne)." },
+        { name: "Socrate", thesis: "Maïeutique : par ses réfutations, il « accouche les âmes » et permet à l'interlocuteur de trouver lui-même la vérité, sans jamais lui transmettre de connaissance." },
+        { name: "Descartes", thesis: "Le préjugé naît de la précipitation et de la prévention. Le doute méthodique suspend le jugement pour atteindre le certain." },
+        { name: "Spinoza", thesis: "L'illusion résiste à la connaissance de la vérité : elle n'est pas une erreur accidentelle mais intentionnelle, motivée par un désir, et la révélation du vrai ne suffit pas à la détruire." },
+        { name: "Alain", thesis: "« Penser n'est pas croire » : penser, c'est inventer sans croire, créer des hypothèses, lier des idées. La vérité suppose un rapport désintéressé à la connaissance." },
+        { name: "Popper", thesis: "Critère de falsifiabilité : une théorie n'est scientifique que si elle est réfutable par l'expérience." },
+        { name: "Kant", thesis: "La sensibilité ne reçoit pas que des sensations mais des « représentations » structurées par l'espace et le temps. Tribunal de la Raison contre le dogmatisme." }
+      ],
+      distinctions: [
+        { pair: "Erreur / Mensonge", note: "L'erreur est accidentelle (contraire du vrai en connaissance) ; le mensonge est intentionnel (contraire du vrai en morale)." },
+        { pair: "Erreur / Illusion", note: "L'illusion est une erreur motivée par un désir ; elle ne disparaît ni par l'expérience ni par la réfutation." },
+        { pair: "Opinion / Vérité", note: "L'opinion est un jugement fondé sur une croyance ; la vérité suppose un rapport désintéressé." },
+        { pair: "Doute / Croyance", note: "Le doute suspend le jugement ; la croyance est une adhésion immédiate, sans médiation d'une réflexion." },
+        { pair: "Démonstration / Interprétation", note: "La démonstration (sciences) déduit des propositions certaines ; l'interprétation (sciences humaines) tire un sens de signes." },
+        { pair: "Mécanisme / Finalisme", note: "Le mécanisme explique par des causes motrices ; le finalisme suppose des causes finales." }
+      ],
+      problems: [
+        { q: "La vérité est-elle accessible à la raison seule ?", axes: "Critère logique (non-contradiction) vs critère expérimental (vérification sensible) — cf. dogmatisme / scepticisme." }
+      ],
+      bridges: ["inconscient", "technique", "conscience", "langage"]
+    },
+    {
+      id: "langage",
+      icon: "💬",
+      title: "Le langage",
+      essence: "Institution humaine : système de signes servant à communiquer sa pensée. Le langage a une dimension universelle, la langue une dimension culturelle.",
+      authors: [
+        { name: "Saussure", thesis: "Les phonèmes (35 en français) font la richesse du langage : avec un petit nombre d'unités, on peut « tout dire ». Le signe est arbitraire, conventionnel, abstrait." },
+        { name: "Hegel", thesis: "« C'est dans le mot que nous pensons » : le langage n'est pas extérieur à la pensée, il la matérialise et la structure." },
+        { name: "Merleau-Ponty", thesis: "Phénoménologie : le langage est « le corps de la pensée ». Pensée et langage se constituent ensemble." },
+        { name: "Bergson", thesis: "Le langage courant, spatial, impersonnel et commun, « trahit » plutôt qu'il ne traduit la durée intérieure (flux continu et singulier d'états de conscience). Le mot « écrase les impressions délicates et fugitives de notre conscience »." },
+        { name: "Rousseau", thesis: "Pas de langage ni de pensée à l'état de nature : pas de langage sans société (comparaison homme sauvage / homme sociabilisé)." }
+      ],
+      distinctions: [
+        { pair: "Signal / Symbole / Signe", note: "Le signal déclenche un comportement (chien de Pavlov) ; le symbole a un lien analogique d'évocation ; le signe (strict) est arbitraire et n'a de valeur que dans un système." },
+        { pair: "Monème / Phonème", note: "Le monème a forme + sens minimal (mots, désinences) ; le phonème a une forme mais aucun sens (lettres, syllabes)." },
+        { pair: "Langue / Langage", note: "La langue est relative à une culture ; le langage est universel (utilisé par tous les hommes)." },
+        { pair: "Abstrait / Concret", note: "L'abstrait sépare du réel un élément (« toutes les roses ont des épines »)." }
+      ],
+      problems: [
+        { q: "Le langage est-il le propre de l'homme ?", axes: "Langage humain (acquis, articulé, abstrait) vs communication animale (les mammifères supérieurs n'accèdent pas à l'abstraction)." },
+        { q: "Le langage n'est-il qu'un instrument traduisant la pensée ?", axes: "Simple traduction vs constitution conjointe pensée/langage (Hegel, Merleau-Ponty)." },
+        { q: "Quel est le pouvoir du langage ?", axes: "Sert-il à connaître la réalité ou y fait-il écran (Bergson) ?" }
+      ],
+      bridges: ["conscience", "verite", "nature"]
+    },
+    {
+      id: "bonheur",
+      icon: "☀️",
+      title: "Le bonheur",
+      essence: "Aspiration universelle (tous désirent être heureux). État stable de satisfaction où nos désirs les plus chers sont réalisés. Étymologie : bonne chance (bon-heur).",
+      authors: [
+        { name: "Hegel", thesis: "L'objet du désir est double : il vise l'objet et la reconnaissance de soi par un autre (cf. les publicités)." },
+        { name: "Morales de l'antiquité", thesis: "Le bonheur réside dans un état durable de contentement produit par la maîtrise des passions grâce à la raison, non dans la réalisation indéfinie des désirs." }
+      ],
+      distinctions: [
+        { pair: "Plaisir / Joie / Bonheur", note: "Le plaisir est la réalisation d'un désir ; la joie est ponctuelle ; le bonheur est un état stable." },
+        { pair: "Désir / Volonté / Besoin", note: "Le désir vise un objet manquant (jamais satisfait) ; la volonté est réaliste (moyens rationnels vers une fin) ; le besoin, non satisfait, entraîne la mort." }
+      ],
+      problems: [
+        { q: "Le bonheur ne dépend-il que de nous ?", axes: "Volonté/désirs vs circonstances extérieures favorables (cf. l'étymologie bon-heur)." },
+        { q: "Le bonheur est-il une illusion ?", axes: "Désirs changeants + bonheur installé passe inaperçu vs état durable accessible par la raison." }
+      ],
+      bridges: ["desir", "liberte", "devoir"]
+    },
+    {
+      id: "nature",
+      icon: "🌿",
+      title: "La nature",
+      essence: "Plusieurs sens : l'environnement (vs objets techniques), l'essence d'une chose, l'état de nature de l'homme (Rousseau : seul, sans langage ni raison), ou un principe transcendant (Kant : Providence).",
+      authors: [
+        { name: "Rousseau", thesis: "À l'état de nature l'homme est seul, dépourvu de langage et de raison. La perfectibilité le distingue de l'animal : faculté de devenir pire OU meilleur, de se dénaturer." },
+        { name: "Kant", thesis: "La Nature elle-même (principe métaphysique) aurait destiné l'homme, par son travail, à devenir un être culturel." },
+        { name: "Spinoza", thesis: "L'illusion du libre-arbitre est ontologique : l'homme conscient se croit cause de ses actes mais n'aperçoit pas les causes qui déterminent sa volonté." },
+        { name: "Montaigne", thesis: "L'hubris (démesure) et l'orgueil expliquent que l'homme se croie supérieur aux autres êtres naturels." }
+      ],
+      distinctions: [
+        { pair: "Nature / Culture", note: "La nature relève de l'inné, l'incréé ; la culture, des normes et valeurs d'un groupe. Mais l'homme est « par nature » un être culturel (Kant, Rousseau)." },
+        { pair: "Différence de nature / de degré", note: "Différence essentielle (homme/animal) vs différence inessentielle de plus ou de moins (entre deux personnes imaginatives)." },
+        { pair: "Nature / Technique", note: "La technique = savoir-faire + activité productrice d'objets (poiesis)." }
+      ],
+      problems: [
+        { q: "L'homme est-il un être à part dans la nature ?", axes: "Supérieur (être doué de raison/âme qui domine la nature) vs simplement différent (être historique et culturel, capable de se dénaturer — Rousseau)." }
+      ],
+      bridges: ["liberte", "conscience", "travail", "technique"]
+    },
+    {
+      id: "liberte",
+      icon: "🕊️",
+      title: "La liberté",
+      essence: "Trois sens en progression : absence de contrainte (sens commun) → indépendance intérieure et autonomie (stoïcisme) → libre-arbitre, faculté de choix réfléchi (Descartes).",
+      authors: [
+        { name: "Descartes", thesis: "Être libre = se donner à soi-même un motif pour agir (la représentation du but). La « liberté d'indifférence » (âne de Buridan) est le plus bas degré ; la vraie liberté est un choix réfléchi. « Plus un choix est motivé, plus il est libre »." },
+        { name: "Spinoza", thesis: "Être libre = suivre la nécessité de sa nature grâce à des idées adéquates. Critique du libre-arbitre : nous avons conscience de vouloir mais ignorons les causes de notre volonté." },
+        { name: "Kant", thesis: "« Il n'y a qu'un être raisonnable qui ait la faculté d'agir d'après la représentation des lois. » La liberté n'est jamais aussi forte que dans l'accomplissement du devoir." },
+        { name: "Sartre", thesis: "« Nous sommes condamnés à être libres » : la liberté est un fardeau à actualiser à tout moment, d'où l'angoisse et la mauvaise foi. L'obstacle révèle la liberté (« coefficient d'adversité du réel »). « Jamais nous n'avons été plus libres que sous l'occupation »." },
+        { name: "Arendt", thesis: "Sans droits politiques, la liberté n'a « aucune réalité mondaine » (cf. totalitarismes)." },
+        { name: "Rousseau", thesis: "La « qualité d'agent libre » distingue l'homme de l'animal ; d'où sa perfectibilité." }
+      ],
+      distinctions: [
+        { pair: "Liberté d'indifférence / Liberté éclairée", note: "L'indétermination (âne de Buridan) vs le choix réfléchi entre des possibilités connues, inscrites dans un horizon de valeurs." },
+        { pair: "Détermination / Motif", note: "La détermination est subie, imposée de l'extérieur ; le motif est librement posé (auto-détermination)." },
+        { pair: "Contingent / Nécessaire", note: "Le comportement libre est contingent (il aurait pu être autre) ; l'animal est déterminé par l'instinct." }
+      ],
+      problems: [
+        { q: "Être libre, est-ce ne rencontrer aucun obstacle ?", axes: "Réaliser ses désirs sans résistance (illusoire) vs l'obstacle révèle la liberté comme capacité de définir des fins (Sartre)." },
+        { q: "La liberté est-elle compatible avec la nécessité ?", axes: "Liberté = nécessité intérieure choisie (Spinoza) vs libre-arbitre comme faculté de choix (Descartes)." }
+      ],
+      bridges: ["conscience", "nature", "devoir", "inconscient", "bonheur"]
+    },
+    {
+      id: "conscience",
+      icon: "🪞",
+      title: "La conscience",
+      essence: "Acte par lequel nous nous représentons quelque chose : présence à soi d'un objet. Toute conscience est séparatrice (sujet distinct de l'objet), d'où le sentiment de solitude.",
+      authors: [
+        { name: "Descartes", thesis: "La conscience = la pensée. Elle représente la totalité de la pensée ; il n'y a pas de pensée inconsciente. Le cogito : je suis une substance pensante." },
+        { name: "Kant", thesis: "La conscience ramène une multiplicité de représentations à l'unité d'un « Je ». C'est dans l'acte de conscience que se constituent ensemble sujet et objet. Distinction Je transcendantal / moi empirique (inconnaissable car l'homme est libre)." },
+        { name: "Husserl", thesis: "Phénoménologie : la conscience n'est pas une « chose » mais intentionnalité ; elle se rapporte toujours au monde." },
+        { name: "Sartre", thesis: "La conscience « n'a pas de dedans », elle est pure extériorité à soi, « néant d'être ». Jamais de coïncidence avec soi." },
+        { name: "Spinoza", thesis: "Le propre de l'homme n'est pas la conscience mais le désir (conatus). Par la conscience nous n'avons que des idées inadéquates." }
+      ],
+      distinctions: [
+        { pair: "Conscience immédiate / réfléchie", note: "Présence à soi d'un objet vs conscience de soi (je me saisis moi-même comme objet)." },
+        { pair: "Je transcendantal / moi empirique", note: "Le Je unifie les représentations (pensé, non connu) ; le moi empirique échappe au savoir car l'homme est libre (Kant)." },
+        { pair: "4 points de vue", note: "Métaphysique (qui se cache derrière la conscience ?), phénoménologique (intentionnalité), psychologique (introspection), moral (juger ses actes)." }
+      ],
+      problems: [
+        { q: "Toute conscience de soi est-elle connaissance de soi ?", axes: "La conscience de soi conditionne la connaissance (Descartes) vs le Je n'est pas connaissable, le moi échappe (Kant)." },
+        { q: "Est-ce dans la solitude qu'on prend conscience de soi ?", axes: "Reprise active de ce que l'on est." },
+        { q: "Le Je est-il unique et permanent ?", axes: "Permanence = condition de l'identité (Descartes) vs représentations involontaires/inaperçues (Freud : l'inconscient)." }
+      ],
+      bridges: ["inconscient", "liberte", "nature", "temps"]
+    },
+    {
+      id: "travail",
+      icon: "🔨",
+      title: "Le travail",
+      essence: "Activité pénible, socialement utile, exigeant un effort continu de la volonté. En un sens restreint, s'inscrit dans une économie. Ambivalent : à la fois contraignant et libérateur.",
+      authors: [
+        { name: "Marx", thesis: "Le travail distingue l'homme de l'animal : en transformant la nature, il se transforme et s'affirme « comme être générique conscient ». Mais le travail aliéné et exploité (extorsion de la plus-value)." },
+        { name: "Kant", thesis: "La nature force l'homme, dénué de tout, à tout conquérir par son travail, jusqu'à l'« estime raisonnable de soi ». La nature forcerait l'homme à devenir un être culturel." },
+        { name: "Hegel", thesis: "Le travail est l'effet de la domination d'une conscience sur une autre (rapport intersubjectif), non une relation immédiate à la nature." },
+        { name: "Nietzsche", thesis: "Le travail est « la meilleure police » : sa glorification apparaît avec l'industrialisation ; l'homme travaille pour des « satisfactions faciles »." },
+        { name: "Arendt", thesis: "Distinction animal laborans (produit des objets périssables) / homo faber (crée des objets pérennes). Mais seule la vie politique réalise « la condition humaine de la pluralité »." }
+      ],
+      distinctions: [
+        { pair: "Contrainte / Devoir", note: "La contrainte force à un comportement non spontané ; le devoir, malgré son caractère contraignant, est librement consenti." },
+        { pair: "Animal laborans / Homo faber", note: "Produire des objets destinés à la destruction vs créer des objets durables (Arendt)." },
+        { pair: "Travail humain / Production animale", note: "Le travail n'est pas naturel : les hommes ne travaillent qu'en société (division du travail)." }
+      ],
+      problems: [
+        { q: "Le travail est-il purement contraignant ?", axes: "Imposé par la société/les besoins (travail aliéné) vs émancipateur par nature (distingue de l'animal, prépare l'usage moral de la liberté). Ambivalence : contraignant par accident, libérateur par nature." }
+      ],
+      bridges: ["nature", "technique", "liberte", "justice"]
+    },
+    {
+      id: "inconscient",
+      icon: "🌊",
+      title: "L'inconscient",
+      essence: "Définition freudienne : ensemble des représentations refoulées (désirs et fantasmes). Les 9/10 du psychisme nous demeurent cachés. Hypothèse théorique, non réalité directement expérimentable.",
+      authors: [
+        { name: "Freud", thesis: "Définition dynamique du psychisme : des forces circulent. Trois « blessures narcissiques » : Copernic, Darwin, Freud (« le moi n'est pas maître dans sa propre maison »). Le rêve = réalisation d'un désir refoulé (contenu manifeste / latent)." },
+        { name: "Descartes", thesis: "La conscience = la pensée = l'essence de l'âme. Pas de « pensée inconsciente » psychique (il admet l'inconscient dans le corps, pas dans l'esprit)." },
+        { name: "Alain", thesis: "L'inconscient ne doit pas servir d'alibi moral : « l'inconscient n'est pas un autre moi », il ne faut pas en faire un « mythe dangereux »." },
+        { name: "Popper", thesis: "La théorie psychanalytique n'est pas réfutable : aucune expérience ne peut l'invalider, donc elle n'est pas scientifique au sens strict." }
+      ],
+      distinctions: [
+        { pair: "Inconscient / Inconscience", note: "L'inconscient (psychanalyse) = partie du psychisme ; l'inconscience = état de fait (coma, sens commun)." },
+        { pair: "Pulsion / Instinct", note: "La pulsion est la représentation psychique d'un état corporel (pulsions de vie/de mort) ; l'instinct est un comportement automatique de conservation de l'espèce." },
+        { pair: "Refoulement / Sublimation", note: "Le refoulement chasse pensées et désirs dans l'inconscient ; la sublimation détourne un désir vers un but socialement acceptable (art, sport, travail)." },
+        { pair: "Contenu manifeste / latent", note: "Le récit du rêve au réveil vs son sens caché (le désir refoulé), retrouvé par la cure." }
+      ],
+      problems: [
+        { q: "Existe-t-il une science de l'inconscient ?", axes: "Observation rigoureuse + concepts/lois vs objet non expérimentable, méthode interprétative, théorie non réfutable (Popper)." },
+        { q: "L'idée d'inconscient exclut-elle la liberté ?", axes: "On peut prendre connaissance de ses désirs pour les dominer vs déterminisme puissant. Synthèse : libération par la connaissance de soi (cure) ; sur le plan éthique, faire abstraction de l'inconscient (Alain)." }
+      ],
+      bridges: ["conscience", "liberte", "verite"]
+    },
+    {
+      id: "justice",
+      icon: "⚖️",
+      title: "La justice & l'État",
+      essence: "Trois sens : vertu individuelle, ensemble de valeurs (égalité, équité, solidarité), institution. La difficulté est d'inscrire un idéal de justice dans le réel singulier.",
+      authors: [
+        { name: "Aristote", thesis: "Deux justices (Éthique à Nicomaque V) : distributive/proportionnelle (à chacun selon ses mérites) et commutative/arithmétique (traitement rigoureusement égal)." },
+        { name: "Rousseau", thesis: "L'État est juste s'il donne la souveraineté au peuple. La loi est juste comme « expression de la volonté générale » (volonté commune raisonnable, ≠ somme des volontés particulières, ≠ volonté de la majorité). « En obéissant aux lois, le peuple n'obéit qu'à lui-même »." },
+        { name: "Machiavel", thesis: "Réalisme politique : adapter la manière de gouverner à la réalité (vs idéalisme de Rousseau/Kant)." },
+        { name: "Marx", thesis: "Distinction de l'« appareil » d'État et du pouvoir d'État." },
+        { name: "Thoreau", thesis: "Désobéissance civile : une transgression des lois peut être un « dernier recours » face à l'injustice." }
+      ],
+      distinctions: [
+        { pair: "Justice distributive / commutative", note: "Proportionnelle aux mérites vs strictement égalitaire (Aristote)." },
+        { pair: "Droit positif / droit moral", note: "Pouvoir donné par les lois écrites vs droit universel non écrit (cf. apartheid : oppresseurs et opprimés se réclamaient d'un droit différent)." },
+        { pair: "État de droit / État de fait", note: "La République (idéal) vs dictatures et régimes totalitaires." },
+        { pair: "Volonté générale / volonté de la majorité", note: "Volonté commune raisonnable vs simple addition de désirs (à ne pas confondre)." },
+        { pair: "Égalité / Identité", note: "Équivalence selon un critère donné vs ce par quoi deux êtres sont semblables en tout point." }
+      ],
+      problems: [
+        { q: "L'homme juste peut-il recourir à la violence ?", axes: "Combattre l'injustice par tout moyen (justicier, Antigone) vs la violence est illimitée, irrationnelle, incompatible avec la justice (Gandhi, Socrate du Criton). Synthèse : ultime recours encadré." },
+        { q: "L'État vise-t-il essentiellement l'ordre ?", axes: "Surmonter les conflits, assurer la paix vs l'ordre n'est qu'un moyen de garantir les libertés (sinon : dérive sécuritaire, totalitarisme)." }
+      ],
+      bridges: ["liberte", "devoir", "travail"]
+    },
+    {
+      id: "devoir",
+      icon: "📏",
+      title: "Le devoir, la liberté morale",
+      essence: "Règle d'action qui s'impose à la volonté (« impératif » selon Kant). Librement consenti, donc distinct de la contrainte. Pour Kant, la liberté n'est jamais aussi réelle que dans l'accomplissement du devoir.",
+      authors: [
+        { name: "Kant", thesis: "Seule une bonne volonté est morale (l'intention, non l'acte). L'impératif catégorique est inconditionné. Trois caractères : universalité, respect de la personne (fin, jamais simple moyen), autonomie. Le devoir révèle l'essence de notre liberté mais ne procure pas le bonheur." },
+        { name: "Rousseau", thesis: "« On peut être savant sans être homme » : la morale n'exige pas un savoir. Mais pour lui la voix de la morale est douce et les dispositions naturelles bonnes (Kant le conteste)." },
+        { name: "Benjamin Constant", thesis: "Contre Kant : le devoir de véracité est général, non universel. Qui veut faire un usage injuste de la vérité perd le droit à la vérité (cas de l'ami poursuivi). Origine du conséquentialisme." }
+      ],
+      distinctions: [
+        { pair: "Conforme au devoir / par devoir", note: "Le marchand honnête par intérêt (réputation) agit conformément au devoir ; l'honnêteté par devoir relève d'une intention pure." },
+        { pair: "Mensonge / Erreur / Véracité", note: "Le mensonge est intentionnel (moral) ; l'erreur accidentelle. Le mensonge s'oppose à la véracité (sincérité), pas à la vérité." },
+        { pair: "Intentionnalisme / Conséquentialisme", note: "La valeur morale tient à l'intention (Kant) vs aux effets produits (Constant)." },
+        { pair: "Usage théorique / pratique de la raison", note: "Déterminer les lois de la nature vs les lois universelles de l'action (devoirs)." }
+      ],
+      problems: [
+        { q: "Le devoir s'oppose-t-il à la liberté ?", axes: "Le devoir est contraignant (penchant au mal, « faire exception pour soi ») vs obéir à une loi de la raison prouve que nous sommes libres (non déterminés par les inclinations sensibles)." },
+        { q: "Toutes les morales se valent-elles ?", axes: "Relativisme des morales culturelles vs morale objective au-dessus des morales (sinon plus aucun critère contre la morale nazie)." },
+        { q: "Faut-il toujours dire la vérité ?", axes: "Impératif catégorique de véracité (Kant) vs devoir général à exceptions (Constant) ; le « mensonge par nécessité » sous contrainte n'est pas un mensonge." }
+      ],
+      bridges: ["liberte", "justice", "verite", "bonheur"]
+    },
+    {
+      id: "technique",
+      icon: "⚙️",
+      title: "La technique, la science, la nature",
+      essence: "La technique = savoir-faire + production d'objets (poiesis). Distincte de la science mais de plus en plus liée à elle (techno-science). La science est passée de la contemplation (théoria) au pouvoir.",
+      authors: [
+        { name: "Descartes", thesis: "« Se rendre comme maîtres et possesseurs de la nature » (Discours de la méthode) : la science devient pouvoir, applications pratiques." },
+        { name: "Francis Bacon", thesis: "Instigateur du changement : le progrès des connaissances doit avoir des applications concrètes." },
+        { name: "Hans Jonas", thesis: "« La possibilité d'une application pratique fait partie de l'essence théorique des sciences modernes. La domination prend la place de la contemplation de la nature. »" },
+        { name: "Günther Anders", thesis: "« Honte prométhéenne » : l'homme devenu obsolète a honte de sa vulnérabilité (naissance, vieillesse, maladie) face à ses machines. L'idéal devient performance quantitative." },
+        { name: "Hannah Arendt", thesis: "« Échanger l'homme contre un ouvrage de ses mains » : la condition terrestre = la condition humaine (finitude). Le désir ne doit pas se régler sur la capacité : ce qui est possible n'est pas pour autant éthiquement fondé. C'est affaire de politique et de valeurs." },
+        { name: "Aristote", thesis: "« Ce n'est pas parce qu'il a des mains que l'homme est le plus intelligent, mais parce qu'il est le plus intelligent qu'il a des mains. »" }
+      ],
+      distinctions: [
+        { pair: "Technique / Science", note: "Un savoir-faire n'est pas un savoir ; mais la techno-science les lie (IA)." },
+        { pair: "Théoria / Pouvoir", note: "La science antique est contemplation pure (vie la plus libre) ; la science moderne (XVIIe) devient domination de la nature." },
+        { pair: "Possible / Éthique", note: "Ce que nous pouvons faire n'est pas ce que nous devons faire (Arendt) : le désir ne doit pas se régler sur la capacité." }
+      ],
+      problems: [
+        { q: "Maîtrisons-nous la technique ?", axes: "Outil au service de l'homme vs autonomisation de la technique (l'homme obsolète d'Anders)." },
+        { q: "Faut-il limiter les recherches scientifiques ?", axes: "Liberté de la science vs nécessité d'une morale collective/politique (Arendt : artificialisation du vivant, transhumanisme)." }
+      ],
+      bridges: ["nature", "travail", "verite"]
+    },
+    {
+      id: "temps",
+      icon: "⏳",
+      title: "Le temps",
+      essence: "Non un « milieu » ni une succession d'instants (ce serait le rabattre sur l'espace), mais un passage continuel et irréversible par lequel le présent devient passé. « L'essence du temps est de tendre au non-être » (St Augustin).",
+      authors: [
+        { name: "St Augustin", thesis: "« Si personne ne m'interroge je le sais ; si je veux répondre je l'ignore. » Il n'y a pas trois temps mais trois présents : présent du passé (mémoire), du présent (attention), de l'avenir (attente)." },
+        { name: "Platon", thesis: "« Le temps est l'image mobile de l'éternité » : l'être (immobile) passe temporairement dans le sensible. L'essence n'est pas dans le temps." },
+        { name: "Bergson", thesis: "La conscience = durée, flux et pure continuité d'états singuliers, ≠ temps mathématique (cf. paradoxes de Zénon qui réduisent le temps à une trajectoire spatiale divisible)." },
+        { name: "Merleau-Ponty", thesis: "« Le temps suppose une vue sur le temps. » « Le monde objectif est incapable de porter le temps. » Le temps est « style de l'être », il naît du rapport singulier de l'être et du sujet." }
+      ],
+      distinctions: [
+        { pair: "Temps / Espace", note: "Le temps est irréversible et subjectif ; l'espace réversible et objectif." },
+        { pair: "Temps objectif / vécu", note: "Mesures communes (heures, saisons) vs durée intérieure variable (l'un s'ennuie, l'autre « ne voit pas l'heure passer »)." },
+        { pair: "Durée / temps mathématique", note: "Flux continu d'états de conscience vs succession divisible à l'infini." }
+      ],
+      problems: [
+        { q: "Peut-on parler correctement du temps ?", axes: "Tout est temps et mesurable vs réalité singulière qui échappe aux concepts (St Augustin) car intérieure à une conscience." },
+        { q: "Le temps est-il objectif ?", axes: "Qualité intrinsèque des êtres + mesures communes vs déroulement dans une conscience (subjectif) ; synthèse : naît du rapport sujet/monde (Merleau-Ponty)." },
+        { q: "Le temps est-il la marque de mon impuissance ?", axes: "On subit la fuite irréversible vs le temps est l'occasion de notre liberté." }
+      ],
+      bridges: ["conscience", "liberte", "verite"]
+    }
+  ];
+
+  /* ════════════ RENDU ════════════ */
+  const mapEl = document.getElementById("map");
+  const noResultEl = document.getElementById("no-result");
+
+  function el(tag, cls, text) {
+    const e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.textContent = text;
+    return e;
+  }
+
+  const notionEls = {}; // id -> {wrapper, openFn}
+
+  NOTIONS.forEach(function (n) {
+    const wrapper = el("div", "notion");
+    wrapper.setAttribute("data-id", n.id);
+
+    /* searchable text */
+    let searchText = n.title + " " + n.essence;
+    n.authors.forEach(function (a) { searchText += " " + a.name + " " + a.thesis; });
+    n.distinctions.forEach(function (d) { searchText += " " + d.pair + " " + d.note; });
+    n.problems.forEach(function (p) { searchText += " " + p.q + " " + p.axes; });
+    wrapper.setAttribute("data-search", searchText.toLowerCase());
+
+    /* head */
+    const head = el("div", "notion-head");
+    const titleWrap = el("div", "notion-title");
+    titleWrap.appendChild(el("span", "notion-icon", n.icon));
+    titleWrap.appendChild(el("span", null, n.title));
+    head.appendChild(titleWrap);
+    head.appendChild(el("span", "chevron", "▶"));
+    wrapper.appendChild(head);
+
+    /* body */
+    const body = el("div", "notion-body");
+
+    body.appendChild(el("div", "essence", n.essence));
+
+    /* authors */
+    if (n.authors.length) {
+      const block = el("div", "block");
+      const label = el("div", "block-label authors");
+      label.appendChild(el("span", "dot author"));
+      label.appendChild(el("span", null, "Auteurs & thèses"));
+      block.appendChild(label);
+      n.authors.forEach(function (a) {
+        const item = el("div", "author-item");
+        const strong = el("strong", null, a.name + " — ");
+        const thesis = el("span", "thesis", a.thesis);
+        item.appendChild(strong);
+        item.appendChild(thesis);
+        if (a.quote) {
+          const q = el("span", "quote", a.quote);
+          item.appendChild(q);
+        }
+        block.appendChild(item);
+      });
+      body.appendChild(block);
+    }
+
+    /* distinctions */
+    if (n.distinctions.length) {
+      const block = el("div", "block");
+      const label = el("div", "block-label distinctions");
+      label.appendChild(el("span", "dot distinction"));
+      label.appendChild(el("span", null, "Distinctions clés"));
+      block.appendChild(label);
+      n.distinctions.forEach(function (d) {
+        const item = el("div", "dist-item");
+        const b = el("b", null, d.pair + " : ");
+        item.appendChild(b);
+        item.appendChild(el("span", null, d.note));
+        block.appendChild(item);
+      });
+      body.appendChild(block);
+    }
+
+    /* problems */
+    if (n.problems.length) {
+      const block = el("div", "block");
+      const label = el("div", "block-label problems");
+      label.appendChild(el("span", "dot problem"));
+      label.appendChild(el("span", null, "Problématiques"));
+      block.appendChild(label);
+      n.problems.forEach(function (p) {
+        const item = el("div", "problem-item");
+        item.appendChild(el("span", "q", p.q));
+        item.appendChild(el("span", "axes", p.axes));
+        block.appendChild(item);
+      });
+      body.appendChild(block);
+    }
+
+    /* bridges */
+    if (n.bridges && n.bridges.length) {
+      const block = el("div", "block");
+      const label = el("div", "block-label bridges");
+      label.appendChild(el("span", "dot bridge"));
+      label.appendChild(el("span", null, "Passerelles vers d'autres notions"));
+      block.appendChild(label);
+      const list = el("div", "bridges-list");
+      n.bridges.forEach(function (bid) {
+        const target = NOTIONS.find(function (x) { return x.id === bid; });
+        if (!target) return;
+        const chip = el("span", "bridge-chip", target.icon + " " + target.title);
+        chip.addEventListener("click", function (e) {
+          e.stopPropagation();
+          openNotion(bid, true);
+        });
+        list.appendChild(chip);
+      });
+      block.appendChild(list);
+      body.appendChild(block);
+    }
+
+    wrapper.appendChild(body);
+
+    head.addEventListener("click", function () {
+      wrapper.classList.toggle("open");
+    });
+
+    mapEl.appendChild(wrapper);
+    notionEls[n.id] = wrapper;
+  });
+
+  function openNotion(id, scroll) {
+    const w = notionEls[id];
+    if (!w) return;
+    w.classList.add("open");
+    if (scroll) {
+      w.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }
+
+  /* ════════════ RECHERCHE ════════════ */
+  const searchEl = document.getElementById("search");
+  searchEl.addEventListener("input", function () {
+    const q = searchEl.value.trim().toLowerCase();
+    let visible = 0;
+    NOTIONS.forEach(function (n) {
+      const w = notionEls[n.id];
+      const txt = w.getAttribute("data-search");
+      if (q === "" || txt.indexOf(q) !== -1) {
+        w.classList.remove("hidden");
+        visible++;
+        if (q !== "" && q.length >= 2) {
+          w.classList.add("open");
+        }
+      } else {
+        w.classList.add("hidden");
+      }
+    });
+    noResultEl.style.display = visible === 0 ? "block" : "none";
+  });
+
+  /* ════════════ CONTRÔLES ════════════ */
+  document.getElementById("expand-all").addEventListener("click", function () {
+    NOTIONS.forEach(function (n) { notionEls[n.id].classList.add("open"); });
+  });
+  document.getElementById("collapse-all").addEventListener("click", function () {
+    NOTIONS.forEach(function (n) { notionEls[n.id].classList.remove("open"); });
+  });
+
+})();
+</script>
+</body>
+</html>
